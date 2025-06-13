@@ -1,5 +1,8 @@
-use numpy::ndarray::{ArrayD, ArrayViewD, ArrayViewMutD};
-use numpy::{IntoPyArray, PyArrayDyn, PyArrayMethods, PyReadonlyArrayDyn};
+use numpy::ndarray::{Array1, ArrayD, ArrayView1, ArrayView2, ArrayViewD, ArrayViewMutD};
+use numpy::{
+    IntoPyArray, PyArray1, PyArrayDyn, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2,
+    PyReadonlyArrayDyn,
+};
 use pyo3::prelude::*;
 use pyo3::{pymodule, types::PyModule, Bound, PyResult, Python};
 /// Formats the sum of two numbers as string.
@@ -15,6 +18,25 @@ fn axpy(a: f64, x: ArrayViewD<'_, f64>, y: ArrayViewD<'_, f64>) -> ArrayD<f64> {
 // example using a mutable borrow to modify an array in-place
 fn mult(a: f64, mut x: ArrayViewMutD<'_, f64>) {
     x *= a;
+}
+
+fn lgres_mat(x: ArrayView2<'_, f64>, b: ArrayView1<'_, f64>) -> Array1<f64> {
+    // This is a placeholder for the actual implementation of the lgres_mat function.
+    // For now, it just returns the result of axpy with a = 1.0.
+    x.dot(&b)
+}
+
+#[pyfunction]
+#[pyo3(name = "lgres_mat")]
+fn lgres_mat_py<'py>(
+    py: Python<'py>,
+    x: PyReadonlyArray2<'py, f64>,
+    b: PyReadonlyArray1<'py, f64>,
+) -> Bound<'py, PyArray1<f64>> {
+    let x = x.as_array();
+    let b = b.as_array();
+    let z = lgres_mat(x, b);
+    z.into_pyarray(py)
 }
 
 // wrapper of `axpy`
@@ -49,12 +71,14 @@ mod rustputo {
     #[pymodule_export]
     use super::axpy_py;
     #[pymodule_export]
+    use super::lgres_mat_py;
+    #[pymodule_export]
     use super::mult_py;
     #[pymodule_export]
     use super::sum_as_string;
 
     #[pymodule_init]
-    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    fn init(_m: &Bound<'_, PyModule>) -> PyResult<()> {
         Ok(())
     }
 }
