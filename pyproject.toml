@@ -1,0 +1,23 @@
+[build-system]
+requires = ["maturin>=1.8,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "rustputo"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
+dependencies = [
+    "hpp2cythonparser@git+https://github.com/willwiz/hpp2cythonparser.git",
+    "arraystubs@git+https://github.com/willwiz/arraystubs",
+    "pytools@git+https://github.com/willwiz/pytools",
+    "matplotlib",
+    "numpy",
+]
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "rustputo.model"
