@@ -18,6 +18,7 @@ dependencies = [
     "matplotlib",
     "numpy",
 ]
+license = { file = "LICENSE" }
 [tool.maturin]
 features = ["pyo3/extension-module"]
 module-name = "rustputo.model"

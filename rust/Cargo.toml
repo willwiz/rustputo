@@ -11,3 +11,6 @@ crate-type = ["cdylib"]
 [dependencies]
 pyo3 = { version = "0.25", features = ["extension-module"] }
 numpy = "0.25"
+ndarray = "0.16.1"
+ndarray-linalg = { version = "0.17.0", features = ["intel-mkl-static"] }
+refinement = "0.5.0"
