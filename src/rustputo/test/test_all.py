@@ -2,6 +2,7 @@
 import unittest
 
 import numpy as np
+
 from rustputo.model import axpy, mult, sum_as_string
 
 

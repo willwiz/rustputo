@@ -5,5 +5,5 @@ pub fn lgres_mat(x: ArrayView2<'_, f64>, b: ArrayView1<'_, f64>) -> Array1<f64> 
     // For now, it just returns the result of axpy with a = 1.0.
     let x_tx = x.reversed_axes().dot(&x);
     let x_tx_inv = x_tx.inv().unwrap();
-    x_tx_inv.dot(&b)
+    x_tx_inv.dot(&x).dot(&b)
 }

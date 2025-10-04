@@ -1,0 +1,16 @@
+use crate::biomechanics::hyperelasticity::{ComputeUniaxialPK2, UniaxialPK2Stress};
+use crate::kinematics::deformation::UniaxialDeformation;
+
+pub struct HolzapfelUniaxial {
+    pub k: f64,
+    pub b: f64,
+}
+
+impl ComputeUniaxialPK2 for HolzapfelUniaxial {
+    fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress {
+        UniaxialPK2Stress {
+            stress: self.k * (strain.c - 1.0) * (self.b * (strain.c - 1.0).powi(2)).exp(),
+            pressure: 0.0,
+        }
+    }
+}

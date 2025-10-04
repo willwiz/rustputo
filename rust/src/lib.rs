@@ -1,7 +1,9 @@
 mod biomechanics;
 mod fractional;
+mod kinematics;
 mod linalg;
 mod tests;
+mod tissues_1d;
 
 use linalg::optimization::linear::lgres_mat_py;
 

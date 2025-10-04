@@ -7,5 +7,5 @@ pub fn interpolate_arr_1d(arr: &[f64; 100], x: f64) -> f64 {
     if percentile == 0 {
         return arr[0] * t;
     }
-    arr[0] * (1.0 - t) + arr[1] * t
+    arr[percentile - 1] * (1.0 - t) + arr[percentile] * t
 }

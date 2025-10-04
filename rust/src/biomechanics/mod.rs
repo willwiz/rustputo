@@ -1,2 +1,3 @@
-pub mod constitutive;
-pub mod kinematics;
+pub mod hyperelasticity;
+pub mod matlaw_uniaxial;
+pub mod viscoelasticity;
