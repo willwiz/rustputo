@@ -1,4 +1,5 @@
 pub mod arrays;
+
 use arrays::{axpy, mult};
 use numpy::{IntoPyArray, PyArrayDyn, PyArrayMethods, PyReadonlyArrayDyn};
 use pyo3::prelude::*;

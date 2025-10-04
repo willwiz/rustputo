@@ -1,9 +1,8 @@
 //! This file contains precomputed data for the Caputo fractional derivative on a fourier domain of M \in {1, 2, ..., 500}.
 
-use super::super::caputo_struct::CaputoData;
+use super::CaputoPrecomputedData;
 
-pub(in super::super) static CAPUTO9: CaputoData<9> = CaputoData::<9> {
-    n_p: 9,
+pub(in super::super) static CAPUTO9: CaputoPrecomputedData<9> = CaputoPrecomputedData::<9> {
     b0: [
         4.654670313152953e-06,
         9.999604684828761e-06,
@@ -1948,8 +1947,7 @@ pub(in super::super) static CAPUTO9: CaputoData<9> = CaputoData::<9> {
     ],
 };
 
-pub(in super::super) static CAPUTO15: CaputoData<15> = CaputoData::<15> {
-    n_p: 15,
+pub(in super::super) static CAPUTO15: CaputoPrecomputedData<15> = CaputoPrecomputedData::<15> {
     b0: [
         4.654670313152953e-06,
         9.999604684828761e-06,
