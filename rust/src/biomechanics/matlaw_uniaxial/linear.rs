@@ -1,11 +1,11 @@
-use crate::biomechanics::hyperelasticity::{ComputeUniaxialPK2, UniaxialPK2Stress};
+use crate::biomechanics::modeling::{ComputeHyperelasticUniaxialPK2, UniaxialPK2Stress};
 use crate::kinematics::deformation::UniaxialDeformation;
 
 pub struct SELinear {
     pub k: f64,
 }
 
-impl ComputeUniaxialPK2 for SELinear {
+impl ComputeHyperelasticUniaxialPK2 for SELinear {
     fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress {
         UniaxialPK2Stress {
             stress: self.k * (strain.c - 1.0),

@@ -9,7 +9,7 @@ use linalg::optimization::linear::lgres_mat_py;
 
 use example::{axpy_py, mult_py, sum_as_string};
 use pyo3::{pymodule, types::PyModule, Bound, PyResult};
-use tissues_1d::aorta::simulate_aorta_uniaxial_response;
+use tissues_1d::aorta::{simulate_aorta_he_uniaxial_response, simulate_aorta_ve_uniaxial_response};
 
 #[cfg(test)]
 static GLB_PRES_TOL: f64 = 1.0e-12;
@@ -27,7 +27,9 @@ mod rustputo {
     #[pymodule_export]
     use super::mult_py;
     #[pymodule_export]
-    use super::simulate_aorta_uniaxial_response;
+    use super::simulate_aorta_he_uniaxial_response;
+    #[pymodule_export]
+    use super::simulate_aorta_ve_uniaxial_response;
     #[pymodule_export]
     use super::sum_as_string;
     #[pymodule_init]
