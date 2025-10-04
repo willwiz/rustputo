@@ -8,8 +8,8 @@ pub struct NeoHookean {
 impl ComputeUniaxialPK2 for NeoHookean {
     fn pk2(&self, _strain: &UniaxialDeformation) -> UniaxialPK2Stress {
         UniaxialPK2Stress {
-            stress: 0.0,
-            pressure: 0.0,
+            stress: self.k,
+            pressure: self.k,
         }
     }
 }

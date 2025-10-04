@@ -1,37 +1,32 @@
-use crate::biomechanics::{
-    hyperelasticity::{ComputeUniaxialPK2, UniaxialPK2Stress},
-    matlaw_uniaxial::{exponential::HolzapfelUniaxial, linear::SELinear, neohookean::NeoHookean},
-};
-use crate::kinematics::deformation::UniaxialDeformation;
+pub mod uniaxial_model;
+use crate::tissues_1d::simulation_1d::simulate_tissue_response;
+use numpy::PyReadonlyArray1;
+use numpy::{IntoPyArray, PyArray1, PyUntypedArrayMethods};
+use pyo3::{Bound, Python};
+use uniaxial_model::AortaUniaxial;
 
-struct AortaUniaxial {
-    pub matrix: NeoHookean,
-    pub elastin: SELinear,
-    pub collagen: HolzapfelUniaxial,
-}
-
-impl AortaUniaxial {
-    pub fn new(matrix_k: f64, elastin_k: f64, collagen_k: f64, collagen_b: f64) -> Self {
-        Self {
-            matrix: NeoHookean { k: matrix_k },
-            elastin: SELinear { k: elastin_k },
-            collagen: HolzapfelUniaxial {
-                k: collagen_k,
-                b: collagen_b,
-            },
-        }
+#[pyo3::pyfunction]
+#[pyo3(name = "simulate_aorta_uniaxial_response")]
+pub fn simulate_aorta_uniaxial_response<'py>(
+    py: Python<'py>,
+    parameters: PyReadonlyArray1<'py, f64>,
+    _constants: PyReadonlyArray1<'py, f64>,
+    strain: PyReadonlyArray1<'py, f64>,
+) -> Bound<'py, PyArray1<f64>> {
+    if parameters.shape() != &[4] {
+        println!(
+            "Array has incorrect dimensions. Expected {:?}, got {:?}",
+            &[4],
+            parameters.shape()
+        );
+        println!("parameters expected: [matrix_k, elastin_k, collagen_k, collagen_b]");
+        panic!("ValueError: Array has incorrect dimensions.");
     }
-}
-
-impl ComputeUniaxialPK2 for AortaUniaxial {
-    fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress {
-        let matrix_stress = self.matrix.pk2(&strain);
-        let elastin_stress = self.elastin.pk2(&strain);
-        let collagen_stress = self.collagen.pk2(&strain);
-
-        UniaxialPK2Stress {
-            stress: matrix_stress.stress + elastin_stress.stress + collagen_stress.stress,
-            pressure: matrix_stress.pressure + elastin_stress.pressure + collagen_stress.pressure,
-        }
-    }
+    let aorta_model = AortaUniaxial::new(
+        *parameters.get(0).unwrap(),
+        *parameters.get(1).unwrap(),
+        *parameters.get(2).unwrap(),
+        *parameters.get(3).unwrap(),
+    );
+    simulate_tissue_response(aorta_model, &strain.as_array()).into_pyarray(py)
 }

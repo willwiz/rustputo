@@ -34,7 +34,18 @@ pub struct UniaxialDeformation {
 }
 
 impl TriaxialDeformation {
-    fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
+    pub fn new() -> Self {
+        Self {
+            c: Array2::eye(3),
+            c_inv: Array2::eye(3),
+            i_1: 3.0,
+            i_2: 3.0,
+            i_3: 1.0,
+            det: 1.0,
+        }
+    }
+
+    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
         self.c = t_c.to_owned();
         self.c_inv = t_c.inv().unwrap();
         self.det = t_c.det().unwrap();
@@ -45,7 +56,19 @@ impl TriaxialDeformation {
 }
 
 impl BiaxialDeformation {
-    fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
+    pub fn new() -> Self {
+        Self {
+            c: Array2::eye(2),
+            c_inv: Array2::eye(2),
+            i_1: 3.0,
+            i_2: 3.0,
+            i_3: 1.0,
+            i_n: 1.0,
+            det: 1.0,
+        }
+    }
+
+    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
         self.c = t_c.to_owned();
         self.c_inv = t_c.inv().unwrap();
         self.det = t_c.det().unwrap();
@@ -57,7 +80,19 @@ impl BiaxialDeformation {
 }
 
 impl UniaxialDeformation {
-    fn precompute_from(&mut self, t_c: f64) {
+    pub fn new() -> Self {
+        Self {
+            c: 1.0,
+            c_inv: 1.0,
+            i_1: 3.0,
+            i_2: 3.0,
+            i_3: 1.0,
+            i_n: 1.0,
+            det: 1.0,
+        }
+    }
+
+    pub fn precompute_from(&mut self, t_c: f64) {
         self.c = t_c;
         self.c_inv = 1.0 / self.c;
         self.det = self.c;
