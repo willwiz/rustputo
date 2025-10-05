@@ -1,4 +1,4 @@
-use crate::fractional::caputo::CaputoData;
+use crate::fractional::caputo_data::CaputoData;
 use crate::fractional::derivatives::LinearDerivative;
 use core::array;
 
@@ -68,14 +68,14 @@ impl<const FDIM: usize, const NP: usize> LinearDerivative<FDIM> for CaputoIntern
         if (dt - self.dt).abs() > f64::EPSILON {
             self.init_with_dt_lin(dt);
         }
-        let df: [f64; FDIM] = array::from_fn(|i| (fval[i] - self.fprev[i]));
+        let df: [f64; FDIM] = array::from_fn(|i| fval[i] - self.fprev[i]);
         self.fprev = *fval;
         let mut v: [f64; FDIM] = [0.0; FDIM];
         for k in 0..self.qk.len() {
             // Update qk with the new values for the current iteration
             self.qk[k] = array::from_fn(|i| self.e2[k] * self.qk[k][i] + self.bek[k] * df[i]);
             // compute the result of the fractional derivative
-            v = array::from_fn(|i| (v[i] + self.qk[k][i]));
+            v = array::from_fn(|i| v[i] + self.qk[k][i]);
         }
         v
     }

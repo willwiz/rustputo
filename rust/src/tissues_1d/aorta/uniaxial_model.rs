@@ -9,7 +9,7 @@ use crate::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
     },
-    fractional::caputo_store::caputo_internal::CaputoInternal,
+    fractional::caputo::caputo_internal::CaputoInternal,
 };
 
 pub struct AortaUniaxial {
@@ -66,13 +66,13 @@ impl ComputeHyperelasticUniaxialPK2 for AortaUniaxial {
 }
 
 impl ComputeViscoelasticUniaxialPK2 for AortaUniaxialViscoelastic {
-    fn pk2(&mut self, strain: &UniaxialDeformation, dt: &f64) -> UniaxialPK2Stress {
+    fn pk2(&mut self, strain: &UniaxialDeformation, dt: f64) -> UniaxialPK2Stress {
         let matrix_stress = self.elastic.matrix.pk2(&strain);
         let elastin_stress = self.elastic.elastin.pk2(&strain);
         let collagen_stress = self.elastic.collagen.pk2(&strain);
         let viscous_stress = self
             .caputo
-            .caputo_derivative_lin(&[*dt], collagen_stress.stress);
+            .caputo_derivative_lin(&[collagen_stress.stress], dt);
 
         UniaxialPK2Stress {
             stress: matrix_stress.stress + elastin_stress.stress + viscous_stress[0],

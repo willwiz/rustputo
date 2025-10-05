@@ -1,3 +1,3 @@
 pub mod caputo;
-pub mod caputo_store;
+pub mod caputo_data;
 pub mod derivatives;

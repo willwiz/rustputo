@@ -10,5 +10,5 @@ pub trait ComputeHyperelasticUniaxialPK2 {
 }
 
 pub trait ComputeViscoelasticUniaxialPK2 {
-    fn pk2(&mut self, strain: &UniaxialDeformation, dt: &f64) -> UniaxialPK2Stress;
+    fn pk2(&mut self, strain: &UniaxialDeformation, dt: f64) -> UniaxialPK2Stress;
 }

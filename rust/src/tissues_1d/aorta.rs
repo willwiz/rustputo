@@ -34,8 +34,20 @@ pub fn simulate_aorta_he_uniaxial_response<'py>(
     simulate_hyperelastic_response(&aorta_model, &strain.as_array()).into_pyarray(py)
 }
 
+/// Compute the viscoelastic response of the aorta under uniaxial loading.
+/// # Arguments
+/// * `parameters` - A 1D array of model parameters:
+///     - matrix_k: stiffness of the ground matrix
+///     - elastin_k: stiffness of the elastin fibers
+///     - collagen_k: stiffness of the collagen fibers
+///     - collagen_b: viscosity of the collagen fibers
+///     - alpha: fractional order of the viscoelastic model
+/// * `constants` - A 1D array of constant parameters:
+///     - T_f: The time scale of the simulation
+/// * `strain` - A 1D array of strain values applied to the aorta
+/// * `dt` - A 1D array of time step values for the simulation
 #[pyo3::pyfunction]
-#[pyo3(name = "simulate_aorta_he_uniaxial_response")]
+#[pyo3(name = "simulate_aorta_ve_uniaxial_response")]
 pub fn simulate_aorta_ve_uniaxial_response<'py>(
     py: Python<'py>,
     parameters: PyReadonlyArray1<'py, f64>,

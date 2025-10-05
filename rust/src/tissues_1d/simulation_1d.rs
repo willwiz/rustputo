@@ -34,7 +34,7 @@ pub fn simulate_viscoelastic_response<T: ComputeViscoelasticUniaxialPK2>(
     let mut kin = UniaxialDeformation::new();
     for (i, &eps) in strain.iter().enumerate() {
         kin.precompute_from(eps);
-        let pk2_stress = tissue.pk2(&kin, dt.get(i).unwrap());
+        let pk2_stress = tissue.pk2(&kin, *dt.get(i).unwrap());
         stress[i] = solve_uniaxial_pk2(&pk2_stress, &kin);
     }
     return stress;
