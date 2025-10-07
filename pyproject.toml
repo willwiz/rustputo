@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "rustputo"
-requires-python = ">=3.8"
+requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
@@ -12,7 +12,6 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "hpp2cythonparser@git+https://github.com/willwiz/hpp2cythonparser.git",
     "arraystubs@git+https://github.com/willwiz/arraystubs",
     "pytools@git+https://github.com/willwiz/pytools",
     "matplotlib",
@@ -22,3 +21,5 @@ license = { file = "LICENSE" }
 [tool.maturin]
 features = ["pyo3/extension-module"]
 module-name = "rustputo.model"
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/test_*.py" = ["S101"]

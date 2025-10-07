@@ -7,7 +7,6 @@ use numpy::PyReadonlyArray1;
 use numpy::{IntoPyArray, PyArray1, PyUntypedArrayMethods};
 use pyo3::{Bound, Python};
 use uniaxial_model::AortaUniaxial;
-
 #[pyo3::pyfunction]
 #[pyo3(name = "simulate_aorta_he_uniaxial_response")]
 pub fn simulate_aorta_he_uniaxial_response<'py>(
@@ -16,21 +15,18 @@ pub fn simulate_aorta_he_uniaxial_response<'py>(
     _constants: PyReadonlyArray1<'py, f64>,
     strain: PyReadonlyArray1<'py, f64>,
 ) -> Bound<'py, PyArray1<f64>> {
-    if parameters.shape() != &[4] {
+    const PARAMETER_VEC_SIZE: usize = 4;
+    if parameters.shape() != &[PARAMETER_VEC_SIZE] {
         println!(
             "Array has incorrect dimensions. Expected {:?}, got {:?}",
-            &[4],
+            &[PARAMETER_VEC_SIZE],
             parameters.shape()
         );
         println!("parameters expected: [matrix_k, elastin_k, collagen_k, collagen_b]");
         panic!("ValueError: Array has incorrect dimensions.");
     }
-    let aorta_model = AortaUniaxial::new(
-        *parameters.get(0).unwrap(),
-        *parameters.get(1).unwrap(),
-        *parameters.get(2).unwrap(),
-        *parameters.get(3).unwrap(),
-    );
+    let p = parameters.as_array();
+    let aorta_model = AortaUniaxial::new(p[0], p[1], p[2], p[3]);
     simulate_hyperelastic_response(&aorta_model, &strain.as_array()).into_pyarray(py)
 }
 
@@ -55,23 +51,19 @@ pub fn simulate_aorta_ve_uniaxial_response<'py>(
     strain: PyReadonlyArray1<'py, f64>,
     dt: PyReadonlyArray1<'py, f64>,
 ) -> Bound<'py, PyArray1<f64>> {
-    if parameters.shape() != &[5] {
+    const PARAMETER_VEC_SIZE: usize = 5;
+    if parameters.shape() != &[PARAMETER_VEC_SIZE] {
         println!(
             "Array has incorrect dimensions. Expected {}, got {}",
-            5,
+            PARAMETER_VEC_SIZE,
             parameters.len()
         );
         println!("parameters expected: [matrix_k, elastin_k, collagen_k, collagen_b]");
         panic!("ValueError: Array has incorrect dimensions.");
     }
-    let mut aorta_model = AortaUniaxialViscoelastic::new(
-        *parameters.get(0).unwrap(),
-        *parameters.get(1).unwrap(),
-        *parameters.get(2).unwrap(),
-        *parameters.get(3).unwrap(),
-        *parameters.get(4).unwrap(),
-        *constants.get(0).unwrap(),
-    );
+    let p = parameters.as_array();
+    let mut aorta_model =
+        AortaUniaxialViscoelastic::new(p[0], p[1], p[2], p[3], p[4], *constants.get(0).unwrap());
     simulate_viscoelastic_response(&mut aorta_model, &strain.as_array(), &dt.as_array())
         .into_pyarray(py)
 }

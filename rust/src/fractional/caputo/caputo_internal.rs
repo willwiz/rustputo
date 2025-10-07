@@ -61,6 +61,10 @@ impl<const FDIM: usize, const NP: usize> LinearDerivative<FDIM> for CaputoIntern
         }
         self.k0 = self.delta * self.k0;
         self.k1 = self.k0 + 1.0;
+        // println!(
+        //     "Caputo initialized with dt = {}, b0 = {}",
+        //     dt, self.caputo.b0
+        // );
         self
     }
 

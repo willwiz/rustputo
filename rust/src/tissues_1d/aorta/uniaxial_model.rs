@@ -1,10 +1,9 @@
+use crate::biomechanics::matlaw_uniaxial::linear::SELinear;
 use crate::fractional::derivatives::LinearDerivative;
 use crate::kinematics::deformation::UniaxialDeformation;
 use crate::{
     biomechanics::{
-        matlaw_uniaxial::{
-            exponential::HolzapfelUniaxial, linear::SELinear, neohookean::NeoHookean,
-        },
+        matlaw_uniaxial::{exponential::HolzapfelUniaxial, neohookean::NeoHookean},
         modeling::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
@@ -72,6 +71,7 @@ impl ComputeViscoelasticUniaxialPK2 for AortaUniaxialViscoelastic {
         let collagen_stress = self.elastic.collagen.pk2(&strain);
         let viscous_stress = self
             .caputo
+            .init_with_dt_lin(dt)
             .caputo_derivative_lin(&[collagen_stress.stress], dt);
 
         UniaxialPK2Stress {
