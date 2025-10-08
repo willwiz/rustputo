@@ -8,7 +8,7 @@ pub struct SELinear {
 impl ComputeHyperelasticUniaxialPK2 for SELinear {
     fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress {
         UniaxialPK2Stress {
-            stress: self.k * (strain.c - 1.0),
+            stress: self.k * (0.5 * (strain.c + strain.i_n) - 1.0),
             pressure: 0.0,
         }
     }
