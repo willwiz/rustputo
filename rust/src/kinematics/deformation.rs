@@ -10,6 +10,7 @@ pub struct TriaxialDeformation {
     pub i_1: f64,
     pub i_2: f64,
     pub i_3: f64,
+    pub j_23: f64,
     pub det: f64,
 }
 
@@ -41,6 +42,7 @@ impl TriaxialDeformation {
             i_1: 3.0,
             i_2: 3.0,
             i_3: 1.0,
+            j_23: 1.0,
             det: 1.0,
         }
     }
@@ -52,6 +54,7 @@ impl TriaxialDeformation {
         self.i_1 = self.c.trace().unwrap();
         self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace().unwrap());
         self.i_3 = self.det;
+        self.j_23 = 1.0 / self.det.powf(2.0 / 3.0);
     }
 }
 

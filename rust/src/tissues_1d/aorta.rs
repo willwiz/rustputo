@@ -1,7 +1,7 @@
 pub mod uniaxial_model;
 use crate::tissues_1d::aorta::uniaxial_model::AortaUniaxialViscoelastic;
-use crate::tissues_1d::simulation_1d::{
-    simulate_hyperelastic_response, simulate_viscoelastic_response,
+use crate::tissues_1d::simulation::{
+    simulate_hyperelastic_uniaxial_response, simulate_viscoelastic_uniaxial_response,
 };
 use numpy::PyReadonlyArray1;
 use numpy::{IntoPyArray, PyArray1, PyUntypedArrayMethods};
@@ -27,7 +27,7 @@ pub fn simulate_aorta_he_uniaxial_response<'py>(
     }
     let p = parameters.as_array();
     let aorta_model = AortaUniaxial::new(p[0], p[1], p[2], p[3]);
-    simulate_hyperelastic_response(&aorta_model, &strain.as_array()).into_pyarray(py)
+    simulate_hyperelastic_uniaxial_response(&aorta_model, &strain.as_array()).into_pyarray(py)
 }
 
 /// Compute the viscoelastic response of the aorta under uniaxial loading.
@@ -64,6 +64,6 @@ pub fn simulate_aorta_ve_uniaxial_response<'py>(
     let p = parameters.as_array();
     let mut aorta_model =
         AortaUniaxialViscoelastic::new(p[0], p[1], p[2], p[3], p[4], *constants.get(0).unwrap());
-    simulate_viscoelastic_response(&mut aorta_model, &strain.as_array(), &dt.as_array())
+    simulate_viscoelastic_uniaxial_response(&mut aorta_model, &strain.as_array(), &dt.as_array())
         .into_pyarray(py)
 }

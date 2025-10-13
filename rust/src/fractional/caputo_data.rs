@@ -3,7 +3,7 @@ use std::{array, f64::consts::PI};
 
 use precomputed_data::caputo_500::{CAPUTO15, CAPUTO9};
 
-use crate::fractional::caputo::utils::interpolate_arr_1d;
+use crate::fractional::utils::interpolate_arr_1d;
 
 pub struct CaputoData<const NP: usize> {
     pub b0: f64,

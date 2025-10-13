@@ -3,7 +3,8 @@ use crate::fractional::derivatives::LinearDerivative;
 use crate::kinematics::deformation::UniaxialDeformation;
 use crate::{
     biomechanics::{
-        matlaw_uniaxial::{exponential::HolzapfelUniaxial, neohookean::NeoHookean},
+        matlaw_general::neohookean::NeoHookean,
+        matlaw_uniaxial::exponential::HolzapfelUniaxial,
         modeling::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
