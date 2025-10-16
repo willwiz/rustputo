@@ -3,6 +3,18 @@ import numpy as np
 from arraystubs import Arr1, Arr2
 from numpy.typing import NDArray
 
+__all__ = [
+    "axpy",
+    "lgres_mat",
+    "mult",
+    "simulate_aorta_he_uniaxial_response",
+    "simulate_aorta_ve_uniaxial_response",
+    "sum_as_string",
+    "testing",
+]
+from rustputo.model import testing as testing
+
+def sum_as_string(a: int, b: int) -> str: ...
 def axpy[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
     a: float | NDArray[T],
     x: Arr1[T],
@@ -12,7 +24,6 @@ def mult[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
     a: float,
     x: Arr1[T],
 ) -> None: ...
-def sum_as_string(a: int, b: int) -> str: ...
 def lgres_mat[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
     x: Arr2[T],
     b: Arr1[T],

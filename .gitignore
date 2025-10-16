@@ -66,7 +66,6 @@ docs/_build/
 .idea/
 
 # VSCode
-.vscode/
 .code-workspace
 
 
