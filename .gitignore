@@ -1,12 +1,12 @@
-/target
-/rust/target
+# Rust target directory for temporary files
+/rust/**/target
 # Byte-compiled / optimized / DLL files
-__pycache__/
-.pytest_cache/
-*.py[cod]
+**/__pycache__/
+**/.pytest_cache/
+**/*.py[cod]
 
 # C extensions
-*.so
+**/*.so
 
 # Distribution / packaging
 .Python
@@ -25,7 +25,7 @@ var/
 include/
 man/
 venv/
-*.egg-info/
+**.egg-info/
 .installed.cfg
 *.egg
 

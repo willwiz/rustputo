@@ -13,7 +13,7 @@ use tissues_1d::aorta::{simulate_aorta_he_uniaxial_response, simulate_aorta_ve_u
 
 /// A Python module implemented in Rust.
 #[pymodule]
-#[pyo3(name = "model")]
+#[pyo3(name = "models")]
 mod rustputo {
     use pyo3::types::PyAnyMethods;
 

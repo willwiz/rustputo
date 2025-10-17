@@ -32,8 +32,3 @@ Zhang, et al. (2021). [Title of the paper]. *Journal Name*, Volume(Issue), pages
 ## License
 
 MIT License.
-
-
-## TODO:
-
-Need to transfer to setuptools-rust.

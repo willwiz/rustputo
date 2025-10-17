@@ -1,27 +1,29 @@
 [build-system]
-requires = ["maturin>=1.8,<2.0"]
-build-backend = "maturin"
+requires = ["setuptools", "setuptools-rust"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "rustputo"
+version = "0.1.2"
 requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
-dynamic = ["version"]
 dependencies = [
     "arraystubs@git+https://github.com/willwiz/arraystubs",
     "pytools@git+https://github.com/willwiz/pytools",
     "matplotlib",
     "numpy",
 ]
-license = { file = "LICENSE" }
-[tool.maturin]
-profile = "release"
-manifest-path = "rust/Cargo.toml"
-features = ["pyo3/extension-module"]
-module-name = "rustputo.model"
-python-source = "src"
+license-files = ["LICENSE"]
+
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/test_*.py" = ["S101"]
+
+[tool.setuptools.packages]
+find = { where = ["src"] }
+[[tool.setuptools-rust.ext-modules]]
+target = "rustputo.models"
+path = "rust/models/Cargo.toml"
+binding = "PyO3"
