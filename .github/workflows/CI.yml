@@ -25,7 +25,7 @@ jobs:
         platform:
           - runner: ubuntu-latest
             target: x86_64
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.12", "3.11", "3.10", "3.9"]
     name: Build on Linux ${{ matrix.platform.target }} with Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
@@ -40,9 +40,10 @@ jobs:
         working-directory: ./rust/models
         run: |
           cargo test
-      - name: Build and test
+      - name: Testing Build from Source
         run: |
           pip install .
       - name: Run tests
         run: |
+          pip install pytest
           pytest tests/

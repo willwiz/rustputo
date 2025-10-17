@@ -12,7 +12,7 @@ __all__ = [
     "sum_as_string",
     "testing",
 ]
-from rustputo.model import testing as testing
+from rustputo.models import testing as testing
 
 def sum_as_string(a: int, b: int) -> str: ...
 def axpy[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](

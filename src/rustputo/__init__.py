@@ -1,1 +1,1 @@
-from rustputo import model as model
+from rustputo import models as models

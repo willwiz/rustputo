@@ -6,7 +6,9 @@ This Python library implements the Caputo fractional derivative as described in 
 
 - Caputo fractional derivative computation
 - Integration with NumPy arrays
+- Common constitutive models for soft tissues
 - Rust-powered backend for speed
+- Fully typed
 
 ## Installation
 
@@ -18,16 +20,12 @@ pip install .
 
 ## Usage
 
-```python
-import rustputo.model as model
-
-# Example usage
-result = model.caputo_derivative(array, order)
-```
+See models.pyi
 
 ## Reference
+To be added
 
-Zhang, et al. (2021). [Title of the paper]. *Journal Name*, Volume(Issue), pages. [DOI or link]
+Zhang, et al. (XXXX). [Title of the paper]. *Journal Name*, Volume(Issue), pages. [DOI or link]
 
 ## License
 
