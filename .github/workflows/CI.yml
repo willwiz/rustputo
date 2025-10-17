@@ -25,7 +25,7 @@ jobs:
         platform:
           - runner: ubuntu-latest
             target: x86_64
-        python-version: ["3.13", "3.12", "3.11", "3.10", "3.9"]
+        python-version: ["3.13", "3.12"]
     name: Build on Linux ${{ matrix.platform.target }} with Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
