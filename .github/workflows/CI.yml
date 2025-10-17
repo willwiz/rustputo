@@ -23,8 +23,10 @@ jobs:
     strategy:
       matrix:
         platform:
-          - runner: ubuntu-22.04
+          - runner: ubuntu-latest
             target: x86_64
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    name: Build on Linux ${{ matrix.platform.target }} with Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
