@@ -5,7 +5,7 @@ use crate::{
     biomechanics::{
         matlaw_general::neohookean::NeoHookean,
         matlaw_uniaxial::exponential::HolzapfelUniaxial,
-        modeling::{
+        model_traits::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
     },

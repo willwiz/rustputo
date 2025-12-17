@@ -1,7 +1,9 @@
 # ruff: noqa: PYI021
 import numpy as np
-from arraystubs import Arr1, Arr2
 from numpy.typing import NDArray
+from pytools.arrays import A1, A2
+
+from rustputo.models import testing as testing
 
 __all__ = [
     "axpy",
@@ -12,27 +14,26 @@ __all__ = [
     "sum_as_string",
     "testing",
 ]
-from rustputo.models import testing as testing
 
 def sum_as_string(a: int, b: int) -> str: ...
 def axpy[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
     a: float | NDArray[T],
-    x: Arr1[T],
-    y: Arr1[T],
-) -> Arr1[T]: ...
+    x: A1[T],
+    y: A1[T],
+) -> A1[T]: ...
 def mult[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
     a: float,
-    x: Arr1[T],
+    x: A1[T],
 ) -> None: ...
 def lgres_mat[T: (np.integer, np.float64, np.float32, np.str_, np.bool_)](
-    x: Arr2[T],
-    b: Arr1[T],
-) -> Arr1[T]: ...
+    x: A2[T],
+    b: A1[T],
+) -> A1[T]: ...
 def simulate_aorta_he_uniaxial_response(
-    parameters: Arr1[np.float64],
-    constants: Arr1[np.float64],
-    strain: Arr1[np.float64],
-) -> Arr1[np.float64]:
+    parameters: A1[np.float64],
+    constants: A1[np.float64],
+    strain: A1[np.float64],
+) -> A1[np.float64]:
     """Simulate the hyperelastic response of the aorta under uniaxial loading.
 
     Parameters
@@ -54,11 +55,11 @@ def simulate_aorta_he_uniaxial_response(
     """
 
 def simulate_aorta_ve_uniaxial_response(
-    parameters: Arr1[np.float64],
-    constants: Arr1[np.float64],
-    strain: Arr1[np.float64],
-    dt: Arr1[np.float64],
-) -> Arr1[np.float64]:
+    parameters: A1[np.float64],
+    constants: A1[np.float64],
+    strain: A1[np.float64],
+    dt: A1[np.float64],
+) -> A1[np.float64]:
     """Simulate the hyperelastic response of the aorta under uniaxial loading.
 
     Parameters

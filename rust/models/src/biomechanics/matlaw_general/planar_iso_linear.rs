@@ -1,7 +1,7 @@
 use ndarray::Array2;
 
 use crate::{
-    biomechanics::modeling::{
+    biomechanics::model_traits::{
         BiaxialPK2Stress, ComputeHyperelasticBiaxialPK2, ComputeHyperelasticTriaxialPK2,
         ComputeHyperelasticUniaxialPK2, TriaxialPK2Stress, UniaxialPK2Stress,
     },

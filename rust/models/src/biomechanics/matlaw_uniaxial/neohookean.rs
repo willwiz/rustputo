@@ -1,4 +1,4 @@
-use crate::biomechanics::modeling::{ComputeHyperelasticUniaxialPK2, UniaxialPK2Stress};
+use crate::biomechanics::model_traits::{ComputeHyperelasticUniaxialPK2, UniaxialPK2Stress};
 use crate::kinematics::deformation::UniaxialDeformation;
 
 pub struct NeoHookean {

@@ -8,23 +8,26 @@ use crate::{
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
 };
 
-pub struct HolzapfelFiber {
+pub struct HolzapfelFiberScaled {
     pub k: f64,
     pub b: f64,
     pub h: Array2<f64>,
+    pub scale: f64,
 }
 
-impl HolzapfelFiber {
-    pub fn new(k: f64, b: f64, h: Array2<f64>) -> Self {
-        Self { k, b, h }
+impl HolzapfelFiberScaled {
+    pub fn new(k: f64, b: f64, h: Array2<f64>, scale: f64) -> Self {
+        Self { k, b, h, scale }
     }
 
-    pub fn from_inplane_angle(k: f64, b: f64, theta: f64) -> Self {
+    pub fn from_inplane_angle(k: f64, b: f64, theta: f64, max_strain: Array2<f64>) -> Self {
         let fiber: [f64; 2] = [theta.cos(), theta.sin()];
+        let fiber_h = Array2::from_shape_fn((2, 2), |(i, j)| fiber[i] * fiber[j]);
         Self {
             k,
             b,
-            h: Array2::from_shape_fn((2, 2), |(i, j)| fiber[i] * fiber[j]),
+            h: fiber_h,
+            scale: (&fiber_h * &max_strain).sum(),
         }
     }
 
@@ -34,15 +37,18 @@ impl HolzapfelFiber {
             theta.cos() * phi.sin(),
             theta.sin(),
         ];
+        let fiber_h = Array2::from_shape_fn((3, 3), |(i, j)| fiber[i] * fiber[j]);
+
         Self {
             k,
             b,
-            h: Array2::from_shape_fn((3, 3), |(i, j)| fiber[i] * fiber[j]),
+            h: fiber_h,
+            scale: (&fiber_h * &max_strain).sum(),
         }
     }
 }
 
-impl ComputeHyperelasticUniaxialPK2 for HolzapfelFiber {
+impl ComputeHyperelasticUniaxialPK2 for HolzapfelFiberScaled {
     fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress {
         let i_f = strain.c - 1.0;
         UniaxialPK2Stress {
@@ -52,7 +58,7 @@ impl ComputeHyperelasticUniaxialPK2 for HolzapfelFiber {
     }
 }
 
-impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiber {
+impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiberScaled {
     fn pk2(&self, strain: &BiaxialDeformation) -> BiaxialPK2Stress {
         let i_f = (&strain.c * &self.h).sum() - 1.0;
         BiaxialPK2Stress {
@@ -62,7 +68,7 @@ impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiber {
     }
 }
 
-impl ComputeHyperelasticTriaxialPK2 for HolzapfelFiber {
+impl ComputeHyperelasticTriaxialPK2 for HolzapfelFiberScaled {
     fn pk2(&self, strain: &TriaxialDeformation) -> TriaxialPK2Stress {
         let i_f = (&strain.c * &self.h).sum() - 1.0;
         TriaxialPK2Stress {

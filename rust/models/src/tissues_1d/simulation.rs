@@ -1,7 +1,7 @@
 use ndarray::{Array1, Array2, Array3, ArrayView1, ArrayView3, Axis};
 
 use crate::{
-    biomechanics::modeling::{
+    biomechanics::model_traits::{
         BiaxialPK2Stress, ComputeHyperelasticBiaxialPK2, ComputeHyperelasticTriaxialPK2,
         ComputeHyperelasticUniaxialPK2, ComputeViscoelasticBiaxialPK2,
         ComputeViscoelasticTriaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
@@ -38,7 +38,7 @@ pub fn simulate_hyperelastic_biaxial_response<T: ComputeHyperelasticBiaxialPK2>(
     strain: &ArrayView3<f64>,
 ) -> Array3<f64> {
     let mut stress = Array3::<f64>::zeros(strain.raw_dim());
-    let mut kin = BiaxialDeformation::new();
+    let mut kin: BiaxialDeformation = BiaxialDeformation::new();
     for (i, eps) in strain.axis_iter(Axis(0)).enumerate() {
         kin.precompute_from(&eps);
         let pk2_stress = tissue.pk2(&kin);

@@ -11,7 +11,6 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "arraystubs@git+https://github.com/willwiz/arraystubs",
     "pytools@git+https://github.com/willwiz/pytools",
     "matplotlib",
     "numpy",
