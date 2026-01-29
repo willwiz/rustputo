@@ -1,6 +1,7 @@
 use crate::biomechanics::matlaw_uniaxial::linear::SELinear;
 use crate::fractional::derivatives::LinearDerivative;
 use crate::kinematics::deformation::UniaxialDeformation;
+use crate::utils::errors::PyError;
 use crate::{
     biomechanics::{
         matlaw_general::neohookean::NeoHookean,
@@ -44,11 +45,11 @@ impl AortaUniaxialViscoelastic {
         collagen_b: f64,
         alpha: f64,
         tf: f64,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, PyError> {
+        Ok(Self {
             elastic: AortaUniaxial::new(matrix_k, elastin_k, collagen_k, collagen_b),
-            caputo: CaputoInternal::<1, 9>::new(alpha, 0.0, tf),
-        }
+            caputo: CaputoInternal::<1, 9>::new(alpha, 0.0, tf)?,
+        })
     }
 }
 

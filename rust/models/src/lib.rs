@@ -4,6 +4,7 @@ pub mod fractional;
 pub mod kinematics;
 pub mod linalg;
 pub mod tissues_1d;
+pub mod utils;
 
 use linalg::optimization::linear::lgres_mat_py;
 
@@ -12,7 +13,7 @@ use pyo3::{pymodule, types::PyModule, Bound, PyResult};
 use tissues_1d::aorta::{simulate_aorta_he_uniaxial_response, simulate_aorta_ve_uniaxial_response};
 
 /// A Python module implemented in Rust.
-#[pymodule]
+#[pymodule(gil_used = false)]
 #[pyo3(name = "models")]
 mod rustputo {
     use pyo3::types::PyAnyMethods;

@@ -8,13 +8,15 @@ mod tests {
 
     #[test]
     fn b0_interpolation() {
-        let val = CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0).expect("Failed to create CaputoInternal");
         assert!((val.caputo.b0 - 1.695090131733033e-05).abs() < 1e-15);
     }
 
     #[test]
     fn beta_interpolation() {
-        let val = CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let benchmark = [
             0.3807318762367083,
             0.22845158393131948,
@@ -33,7 +35,8 @@ mod tests {
 
     #[test]
     fn tau_interpolation() {
-        let val = CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let benchmark = [
             0.0001947414850719321,
             0.0007090855132484599,
@@ -54,13 +57,15 @@ mod tests {
 
     #[test]
     fn b0_interpolation2() {
-        let val = CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0).expect("Failed to create CaputoInternal");
         assert!((val.caputo.b0 - 5.1249158338074934e-05).abs() < 1e-15);
     }
 
     #[test]
     fn beta_interpolation2() {
-        let val = CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let benchmark = [
             1.116177194866666,
             0.5946435683254347,
@@ -79,7 +84,8 @@ mod tests {
 
     #[test]
     fn tau_interpolation2() {
-        let val = CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0);
+        let val =
+            CaputoInternal::<1, 9>::new(0.166, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let benchmark = [
             0.00017679049886707728,
             0.0006430988523212297,
@@ -100,7 +106,8 @@ mod tests {
 
     #[test]
     fn caputo_works() {
-        let mut caputo_init = CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0);
+        let mut caputo_init =
+            CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let fvals = [[0.0], [1.0], [2.0], [3.0]];
         let dfvals: [[f64; 1]; 4] =
             array::from_fn(|i| caputo_init.caputo_derivative_lin(&fvals[i], 0.1));

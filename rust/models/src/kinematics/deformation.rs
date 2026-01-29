@@ -1,9 +1,9 @@
 use super::invariants::PseudoInvariants;
+use crate::utils::errors::PyError;
 use ndarray::{Array2, ArrayView1, ArrayView2};
 use ndarray_linalg::solve::Inverse;
 use ndarray_linalg::trace::Trace;
 use ndarray_linalg::Determinant;
-
 pub struct TriaxialDeformation {
     pub c: Array2<f64>,
     pub c_inv: Array2<f64>,
@@ -47,14 +47,15 @@ impl TriaxialDeformation {
         }
     }
 
-    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
+    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
         self.c = t_c.to_owned();
-        self.c_inv = t_c.inv().unwrap();
-        self.det = t_c.det().unwrap();
-        self.i_1 = self.c.trace().unwrap();
-        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace().unwrap());
+        self.c_inv = t_c.inv()?;
+        self.det = t_c.det()?;
+        self.i_1 = self.c.trace()?;
+        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace()?);
         self.i_3 = self.det;
         self.j_23 = 1.0 / self.det.powf(2.0 / 3.0);
+        Ok(())
     }
 }
 
@@ -71,14 +72,15 @@ impl BiaxialDeformation {
         }
     }
 
-    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) {
+    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
         self.c = t_c.to_owned();
-        self.c_inv = t_c.inv().unwrap();
-        self.det = t_c.det().unwrap();
+        self.c_inv = t_c.inv()?;
+        self.det = t_c.det()?;
         self.i_n = 1.0 / self.det;
-        self.i_1 = self.c.trace().unwrap() + self.i_n;
-        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace().unwrap());
+        self.i_1 = self.c.trace()? + self.i_n;
+        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace()?);
         self.i_3 = 1.0;
+        Ok(())
     }
 }
 

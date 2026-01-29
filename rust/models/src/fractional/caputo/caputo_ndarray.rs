@@ -2,7 +2,10 @@ use std::array;
 
 use ndarray::{Array, Dimension, ShapeBuilder};
 
-use crate::fractional::{caputo_data::CaputoData, derivatives::NDArrayLinearDerivative};
+use crate::{
+    fractional::{caputo_data::CaputoData, derivatives::NDArrayLinearDerivative},
+    utils::errors::PyError,
+};
 
 pub struct CaputoInternal<const NP: usize> {
     pub(super) caputo: CaputoData<NP>,
@@ -21,9 +24,9 @@ pub struct CaputoStore<D: Dimension, const NP: usize> {
 }
 
 impl CaputoInternal<9> {
-    pub fn new(alpha: f64, delta: f64, tf: f64) -> Self {
-        Self {
-            caputo: CaputoData::<9>::new(alpha, tf),
+    pub fn new(alpha: f64, delta: f64, tf: f64) -> Result<Self, PyError> {
+        Ok(Self {
+            caputo: CaputoData::<9>::new(alpha, tf)?,
             delta: delta,
             dt: 0.0,
             c0: 0.0,
@@ -31,14 +34,14 @@ impl CaputoInternal<9> {
             k1: 1.0,
             e2: [0.0; 9],
             bek: [0.0; 9],
-        }
+        })
     }
 }
 
 impl CaputoInternal<15> {
-    pub fn new(alpha: f64, delta: f64, tf: f64) -> Self {
-        Self {
-            caputo: CaputoData::<15>::new(alpha, tf),
+    pub fn new(alpha: f64, delta: f64, tf: f64) -> Result<Self, PyError> {
+        Ok(Self {
+            caputo: CaputoData::<15>::new(alpha, tf)?,
             delta: delta,
             dt: 0.0,
             c0: 0.0,
@@ -46,7 +49,7 @@ impl CaputoInternal<15> {
             k1: 1.0,
             e2: [0.0; 15],
             bek: [0.0; 15],
-        }
+        })
     }
 }
 

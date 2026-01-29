@@ -5,7 +5,8 @@ use crate::tissues_1d::simulation::{
 };
 use numpy::PyReadonlyArray1;
 use numpy::{IntoPyArray, PyArray1, PyUntypedArrayMethods};
-use pyo3::{Bound, Python};
+use pyo3::exceptions::PyValueError;
+use pyo3::{Bound, PyResult, Python};
 use uniaxial_model::AortaUniaxial;
 #[pyo3::pyfunction]
 #[pyo3(name = "simulate_aorta_he_uniaxial_response")]
@@ -14,20 +15,17 @@ pub fn simulate_aorta_he_uniaxial_response<'py>(
     parameters: PyReadonlyArray1<'py, f64>,
     _constants: PyReadonlyArray1<'py, f64>,
     strain: PyReadonlyArray1<'py, f64>,
-) -> Bound<'py, PyArray1<f64>> {
+) -> PyResult<Bound<'py, PyArray1<f64>>> {
     const PARAMETER_VEC_SIZE: usize = 4;
     if parameters.shape() != &[PARAMETER_VEC_SIZE] {
-        println!(
-            "Array has incorrect dimensions. Expected {:?}, got {:?}",
-            &[PARAMETER_VEC_SIZE],
-            parameters.shape()
-        );
-        println!("parameters expected: [matrix_k, elastin_k, collagen_k, collagen_b]");
-        panic!("ValueError: Array has incorrect dimensions.");
+        return Err(PyValueError::new_err(format!(
+            "Array has incorrect dimensions. Expected [matrix_k, elastin_k, collagen_k, collagen_b], got {}",
+            parameters.len()
+        )));
     }
     let p = parameters.as_array();
     let aorta_model = AortaUniaxial::new(p[0], p[1], p[2], p[3]);
-    simulate_hyperelastic_uniaxial_response(&aorta_model, &strain.as_array()).into_pyarray(py)
+    Ok(simulate_hyperelastic_uniaxial_response(&aorta_model, &strain.as_array()).into_pyarray(py))
 }
 
 /// Compute the viscoelastic response of the aorta under uniaxial loading.
@@ -50,20 +48,40 @@ pub fn simulate_aorta_ve_uniaxial_response<'py>(
     constants: PyReadonlyArray1<'py, f64>,
     strain: PyReadonlyArray1<'py, f64>,
     dt: PyReadonlyArray1<'py, f64>,
-) -> Bound<'py, PyArray1<f64>> {
+) -> PyResult<Bound<'py, PyArray1<f64>>> {
     const PARAMETER_VEC_SIZE: usize = 5;
     if parameters.shape() != &[PARAMETER_VEC_SIZE] {
-        println!(
-            "Array has incorrect dimensions. Expected {}, got {}",
-            PARAMETER_VEC_SIZE,
+        return Err(PyValueError::new_err(format!(
+            "Array has incorrect dimensions. Expected [matrix_k, elastin_k, collagen_k, collagen_b], got {}",
             parameters.len()
-        );
-        println!("parameters expected: [matrix_k, elastin_k, collagen_k, collagen_b]");
-        panic!("ValueError: Array has incorrect dimensions.");
+        )));
     }
     let p = parameters.as_array();
+
+    let model_constants = match constants.get(0) {
+        Some(val) => *val,
+        None => {
+            return Err(PyValueError::new_err(
+                "ValueError: constants array is empty.",
+            ));
+        }
+    };
     let mut aorta_model =
-        AortaUniaxialViscoelastic::new(p[0], p[1], p[2], p[3], p[4], *constants.get(0).unwrap());
-    simulate_viscoelastic_uniaxial_response(&mut aorta_model, &strain.as_array(), &dt.as_array())
-        .into_pyarray(py)
+        match AortaUniaxialViscoelastic::new(p[0], p[1], p[2], p[3], p[4], model_constants) {
+            Ok(model) => model,
+            Err(e) => {
+                return Err(PyValueError::new_err(format!(
+                    "Failed to create AortaUniaxialViscoelastic model: {}",
+                    e
+                )));
+            }
+        };
+    match simulate_viscoelastic_uniaxial_response(
+        &mut aorta_model,
+        &strain.as_array(),
+        &dt.as_array(),
+    ) {
+        Ok(result) => Ok(result.into_pyarray(py)),
+        Err(e) => Err(PyValueError::new_err(format!("Simulation failed: {}", e))),
+    }
 }

@@ -1,5 +1,6 @@
 use crate::fractional::caputo_data::CaputoData;
 use crate::fractional::derivatives::LinearDerivative;
+use crate::utils::errors::PyError;
 use core::array;
 
 pub struct CaputoInternal<const FDIM: usize, const NP: usize> {
@@ -16,9 +17,9 @@ pub struct CaputoInternal<const FDIM: usize, const NP: usize> {
 }
 
 impl<const FDIM: usize> CaputoInternal<FDIM, 9> {
-    pub fn new(alpha: f64, delta: f64, tf: f64) -> Self {
-        Self {
-            caputo: CaputoData::<9>::new(alpha, tf),
+    pub fn new(alpha: f64, delta: f64, tf: f64) -> Result<Self, PyError> {
+        Ok(Self {
+            caputo: CaputoData::<9>::new(alpha, tf)?,
             delta: delta,
             dt: 0.0,
             c0: 0.0,
@@ -28,14 +29,14 @@ impl<const FDIM: usize> CaputoInternal<FDIM, 9> {
             bek: [0.0; 9],
             qk: [[0.0; FDIM]; 9],
             fprev: [0.0; FDIM],
-        }
+        })
     }
 }
 
 impl<const FDIM: usize> CaputoInternal<FDIM, 15> {
-    pub fn new(alpha: f64, delta: f64, tf: f64) -> Self {
-        Self {
-            caputo: CaputoData::<15>::new(alpha, tf),
+    pub fn new(alpha: f64, delta: f64, tf: f64) -> Result<Self, PyError> {
+        Ok(Self {
+            caputo: CaputoData::<15>::new(alpha, tf)?,
             delta: delta,
             dt: 0.0,
             c0: 0.0,
@@ -45,7 +46,7 @@ impl<const FDIM: usize> CaputoInternal<FDIM, 15> {
             bek: [0.0; 15],
             qk: [[0.0; FDIM]; 15],
             fprev: [0.0; FDIM],
-        }
+        })
     }
 }
 
