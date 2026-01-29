@@ -11,7 +11,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "pytools@git+https://github.com/willwiz/pytools",
+    "pytools@git+https://github.com/willwiz/pytools@v1.1",
     "matplotlib",
     "numpy",
 ]
@@ -26,3 +26,6 @@ find = { where = ["src"] }
 target = "rustputo.models"
 path = "rust/models/Cargo.toml"
 binding = "PyO3"
+
+[dependency-groups]
+dev = ["pytest>=9.0.2"]
