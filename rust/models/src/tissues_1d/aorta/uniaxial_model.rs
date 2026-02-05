@@ -4,7 +4,7 @@ use crate::utils::errors::PyError;
 use crate::viscoelasticity::derivatives::LinearDerivative;
 use crate::{
     biomechanics::{
-        matlaw_general::neohookean::NeoHookean,
+        matlaw_general::NeoHookean,
         matlaw_uniaxial::exponential::HolzapfelUniaxial,
         model_traits::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
