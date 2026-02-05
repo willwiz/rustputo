@@ -1,11 +1,12 @@
 mod double_e;
 mod holzapfel_fiber;
 mod iso_exponential;
+mod linear;
 mod neohookean;
 mod planar_iso_linear;
-
 pub use double_e::DoubleE;
 pub use holzapfel_fiber::HolzapfelFiber;
 pub use iso_exponential::IsoExponential;
+pub use linear::PlanarLinear;
 pub use neohookean::NeoHookean;
 pub use planar_iso_linear::PlanarIsoLinear;

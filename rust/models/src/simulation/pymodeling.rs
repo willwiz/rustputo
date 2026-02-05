@@ -21,15 +21,7 @@ where
 {
     let p = parameters.as_array();
     let c = constants.as_array();
-    let aorta_model = match M::from_np(&p, &c) {
-        Ok(model) => model,
-        Err(e) => {
-            return Err(PyValueError::new_err(format!(
-                "Failed to create AortaUniaxial model: {}",
-                e
-            )));
-        }
-    };
+    let aorta_model = M::from_np(&p, &c)?;
     match simulate_hyperelastic_uniaxial_response(&aorta_model, &strain.as_array()) {
         Ok(result) => Ok(result.into_pyarray(py)),
         Err(e) => Err(PyValueError::new_err(format!("Simulation failed: {}", e))),
@@ -48,15 +40,7 @@ where
 {
     let p = parameters.as_array();
     let c = constants.as_array();
-    let mut model = match M::from_np(&p, &c) {
-        Ok(model) => model,
-        Err(e) => {
-            return Err(PyValueError::new_err(format!(
-                "Failed to create AortaUniaxialViscoelastic model: {}",
-                e
-            )));
-        }
-    };
+    let mut model = M::from_np(&p, &c)?;
     match simulate_viscoelastic_uniaxial_response(&mut model, &strain.as_array(), &dt.as_array()) {
         Ok(result) => Ok(result.into_pyarray(py)),
         Err(e) => Err(PyValueError::new_err(format!("Simulation failed: {}", e))),

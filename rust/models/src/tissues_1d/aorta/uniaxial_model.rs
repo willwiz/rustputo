@@ -4,8 +4,7 @@ use crate::utils::errors::PyError;
 use crate::viscoelasticity::derivatives::LinearDerivative;
 use crate::{
     biomechanics::{
-        matlaw_general::NeoHookean,
-        matlaw_uniaxial::exponential::HolzapfelUniaxial,
+        matlaw_general::{HolzapfelFiber, NeoHookean},
         model_traits::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
@@ -18,7 +17,7 @@ use ndarray::ArrayView1;
 pub struct AortaUniaxial {
     pub matrix: NeoHookean,
     pub elastin: SELinear,
-    pub collagen: HolzapfelUniaxial,
+    pub collagen: HolzapfelFiber,
 }
 
 pub struct AortaUniaxialViscoelastic {
@@ -47,9 +46,10 @@ impl AortaUniaxial {
         Ok(Self {
             matrix: NeoHookean { k: pars.matrix_k },
             elastin: SELinear { k: pars.elastin_k },
-            collagen: HolzapfelUniaxial {
+            collagen: HolzapfelFiber {
                 k: pars.collagen_k,
                 b: pars.collagen_b,
+                h: ndarray::array![[1.0, 0.0], [0.0, 0.0]],
             },
         })
     }

@@ -5,25 +5,6 @@ use ndarray::{Array2, ArrayView1, ArrayView2};
 use ndarray_linalg::solve::Inverse;
 use ndarray_linalg::trace::Trace;
 use ndarray_linalg::Determinant;
-pub struct TriaxialDeformation {
-    pub c: Array2<f64>,
-    pub c_inv: Array2<f64>,
-    pub i_1: f64,
-    pub i_2: f64,
-    pub i_3: f64,
-    pub j_23: f64,
-    pub det: f64,
-}
-
-pub struct BiaxialDeformation {
-    pub c: Array2<f64>,
-    pub c_inv: Array2<f64>,
-    pub i_1: f64,
-    pub i_2: f64,
-    pub i_3: f64,
-    pub i_n: f64,
-    pub det: f64,
-}
 
 pub struct UniaxialDeformation {
     pub c: f64,
@@ -34,30 +15,49 @@ pub struct UniaxialDeformation {
     pub i_n: f64,
     pub det: f64,
 }
+pub struct BiaxialDeformation {
+    pub c: Array2<f64>,
+    pub c_inv: Array2<f64>,
+    pub i_1: f64,
+    pub i_2: f64,
+    pub i_3: f64,
+    pub i_n: f64,
+    pub det: f64,
+}
 
-impl TriaxialDeformation {
+pub struct TriaxialDeformation {
+    pub c: Array2<f64>,
+    pub c_inv: Array2<f64>,
+    pub i_1: f64,
+    pub i_2: f64,
+    pub i_3: f64,
+    pub j_23: f64,
+    pub det: f64,
+}
+
+impl UniaxialDeformation {
     pub fn new() -> Self {
         Self {
-            c: Array2::eye(3),
-            c_inv: Array2::eye(3),
+            c: 1.0,
+            c_inv: 1.0,
             i_1: 3.0,
             i_2: 3.0,
             i_3: 1.0,
-            j_23: 1.0,
+            i_n: 1.0,
             det: 1.0,
         }
     }
 }
 
-impl Precomputable for TriaxialDeformation {
+impl Precomputable for UniaxialDeformation {
     fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
-        self.c = t_c.to_owned();
-        self.c_inv = t_c.inv()?;
-        self.det = t_c.det()?;
-        self.i_1 = self.c.trace()?;
-        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace()?);
-        self.i_3 = self.det;
-        self.j_23 = 1.0 / self.det.powf(2.0 / 3.0);
+        self.c = t_c[[0, 0]];
+        self.c_inv = 1.0 / self.c;
+        self.det = self.c;
+        self.i_n = 1.0 / self.det.sqrt();
+        self.i_1 = self.c + 2.0 * self.i_n;
+        self.i_2 = 2.0 * self.c * self.i_n + self.i_n * self.i_n;
+        self.i_3 = 1.0;
         Ok(())
     }
 }
@@ -89,30 +89,40 @@ impl Precomputable for BiaxialDeformation {
     }
 }
 
-impl UniaxialDeformation {
+impl TriaxialDeformation {
     pub fn new() -> Self {
         Self {
-            c: 1.0,
-            c_inv: 1.0,
+            c: Array2::eye(3),
+            c_inv: Array2::eye(3),
             i_1: 3.0,
             i_2: 3.0,
             i_3: 1.0,
-            i_n: 1.0,
+            j_23: 1.0,
             det: 1.0,
         }
     }
 }
 
-impl Precomputable for UniaxialDeformation {
+impl Precomputable for TriaxialDeformation {
     fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
-        self.c = t_c[[0, 0]];
-        self.c_inv = 1.0 / self.c;
-        self.det = self.c;
-        self.i_n = 1.0 / self.det.sqrt();
-        self.i_1 = self.c + 2.0 * self.i_n;
-        self.i_2 = 2.0 * self.c * self.i_n + self.i_n * self.i_n;
-        self.i_3 = 1.0;
+        self.c = t_c.to_owned();
+        self.c_inv = t_c.inv()?;
+        self.det = t_c.det()?;
+        self.i_1 = self.c.trace()?;
+        self.i_2 = 0.5 * (self.i_1 * self.i_1 - (self.c.dot(&self.c)).trace()?);
+        self.i_3 = self.det;
+        self.j_23 = 1.0 / self.det.powf(2.0 / 3.0);
         Ok(())
+    }
+}
+
+impl PseudoInvariants for UniaxialDeformation {
+    fn i_4(&self, _a0: &ArrayView1<f64>) -> f64 {
+        self.c
+    }
+
+    fn i_h(&self, _a0: &ArrayView2<f64>) -> f64 {
+        self.c
     }
 }
 
