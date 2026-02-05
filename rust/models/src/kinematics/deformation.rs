@@ -1,4 +1,5 @@
 use super::invariants::PseudoInvariants;
+use crate::kinematics::Precomputable;
 use crate::utils::errors::PyError;
 use ndarray::{Array2, ArrayView1, ArrayView2};
 use ndarray_linalg::solve::Inverse;
@@ -46,8 +47,10 @@ impl TriaxialDeformation {
             det: 1.0,
         }
     }
+}
 
-    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
+impl Precomputable for TriaxialDeformation {
+    fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
         self.c = t_c.to_owned();
         self.c_inv = t_c.inv()?;
         self.det = t_c.det()?;
@@ -71,8 +74,10 @@ impl BiaxialDeformation {
             det: 1.0,
         }
     }
+}
 
-    pub fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
+impl Precomputable for BiaxialDeformation {
+    fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
         self.c = t_c.to_owned();
         self.c_inv = t_c.inv()?;
         self.det = t_c.det()?;
@@ -96,15 +101,18 @@ impl UniaxialDeformation {
             det: 1.0,
         }
     }
+}
 
-    pub fn precompute_from(&mut self, t_c: f64) {
-        self.c = t_c;
+impl Precomputable for UniaxialDeformation {
+    fn precompute_from(&mut self, t_c: &ArrayView2<f64>) -> Result<(), PyError> {
+        self.c = t_c[[0, 0]];
         self.c_inv = 1.0 / self.c;
         self.det = self.c;
         self.i_n = 1.0 / self.det.sqrt();
         self.i_1 = self.c + 2.0 * self.i_n;
         self.i_2 = 2.0 * self.c * self.i_n + self.i_n * self.i_n;
         self.i_3 = 1.0;
+        Ok(())
     }
 }
 

@@ -5,9 +5,10 @@ use crate::{
         ComputeViscoelasticTriaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
     },
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    kinematics::Precomputable,
     utils::errors::PyError,
 };
-use ndarray::{Array1, Array2, Array3, ArrayView1, ArrayView3, Axis};
+use ndarray::{Array1, Array2, Array3, ArrayView1, ArrayView2, ArrayView3, Axis};
 
 pub fn solve_uniaxial_pk2(model: &UniaxialPK2Stress, strain: &UniaxialDeformation) -> f64 {
     model.stress - model.pressure * strain.i_n * strain.c_inv
@@ -27,7 +28,7 @@ where
     let mut stress = Array1::<f64>::zeros(strain.raw_dim());
     let mut kin = UniaxialDeformation::new();
     for (i, &eps) in strain.iter().enumerate() {
-        kin.precompute_from(eps);
+        kin.precompute_from(&ArrayView2::from_shape((1, 1), &[eps])?)?;
         let pk2_stress = tissue.pk2(&kin);
         stress[i] = solve_uniaxial_pk2(&pk2_stress, &kin);
     }
@@ -81,7 +82,7 @@ where
     let mut stress = Array1::<f64>::zeros(strain.raw_dim());
     let mut kin = UniaxialDeformation::new();
     for (i, &eps) in strain.iter().skip(1).enumerate() {
-        kin.precompute_from(eps);
+        kin.precompute_from(&ArrayView2::from_shape((1, 1), &[eps])?)?;
         let _dt = match dt.get(i) {
             Some(val) => *val,
             None => {
