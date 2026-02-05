@@ -6,6 +6,7 @@ use crate::{
         ComputeHyperelasticUniaxialPK2, TriaxialPK2Stress, UniaxialPK2Stress,
     },
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    utils::errors::PyError,
 };
 
 pub struct NeoHookean {
@@ -37,10 +38,10 @@ impl ComputeHyperelasticBiaxialPK2 for NeoHookean {
 }
 
 impl ComputeHyperelasticTriaxialPK2 for NeoHookean {
-    fn pk2(&self, strain: &TriaxialDeformation) -> TriaxialPK2Stress {
-        TriaxialPK2Stress {
+    fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
+        Ok(TriaxialPK2Stress {
             stress: (self.k * strain.j_23)
                 * (Array2::eye(3) - (1.0 / 3.0) * strain.i_1 * &strain.c_inv),
-        }
+        })
     }
 }

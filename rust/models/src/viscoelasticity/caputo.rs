@@ -1,9 +1,10 @@
 pub mod caputo_internal;
 pub mod caputo_ndarray;
+
 #[cfg(test)]
 mod tests {
     use super::caputo_internal::CaputoInternal;
-    use crate::fractional::derivatives::LinearDerivative;
+    use crate::viscoelasticity::derivatives::LinearDerivative;
     use std::array;
 
     #[test]
@@ -110,7 +111,7 @@ mod tests {
             CaputoInternal::<1, 9>::new(0.1, 0.0, 1.0).expect("Failed to create CaputoInternal");
         let fvals = [[0.0], [1.0], [2.0], [3.0]];
         let dfvals: [[f64; 1]; 4] =
-            array::from_fn(|i| caputo_init.caputo_derivative_lin(&fvals[i], 0.1));
+            array::from_fn(|i| caputo_init.derivative_linear(&fvals[i], 0.1));
         let benchmark = [
             0.0,
             1.258940005546393,

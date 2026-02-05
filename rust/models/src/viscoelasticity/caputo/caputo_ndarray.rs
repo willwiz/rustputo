@@ -1,10 +1,11 @@
-use std::array;
-
-use ndarray::{Array, Dimension, ShapeBuilder};
+use ndarray::{Array, Dimension};
 
 use crate::{
-    fractional::{caputo_data::CaputoData, derivatives::NDArrayLinearDerivative},
     utils::errors::PyError,
+    viscoelasticity::{
+        caputo_data::CaputoData,
+        derivatives::{NDArrayLinearDerivative, StressHistory},
+    },
 };
 
 pub struct CaputoInternal<const NP: usize> {
@@ -16,11 +17,6 @@ pub struct CaputoInternal<const NP: usize> {
     pub(super) k1: f64,
     pub(super) e2: [f64; NP],
     pub(super) bek: [f64; NP],
-}
-
-pub struct CaputoStore<D: Dimension, const NP: usize> {
-    pub qk: [Array<f64, D>; NP],
-    pub fprev: Array<f64, D>,
 }
 
 impl CaputoInternal<9> {
@@ -53,17 +49,6 @@ impl CaputoInternal<15> {
     }
 }
 
-impl<D: Dimension, const NP: usize> CaputoStore<D, NP> {
-    pub fn new<Sh: ShapeBuilder<Dim = D> + Copy>(shape: Sh) -> Self {
-        {
-            Self {
-                qk: array::from_fn(|_| Array::<f64, D>::zeros(shape)),
-                fprev: Array::<f64, D>::zeros(shape),
-            }
-        }
-    }
-}
-
 impl<D: Dimension, const NP: usize> NDArrayLinearDerivative<D, NP> for CaputoInternal<NP> {
     fn init_with_dt_lin(&mut self, dt: f64) {
         self.c0 = self.caputo.b0 / dt;
@@ -78,11 +63,11 @@ impl<D: Dimension, const NP: usize> NDArrayLinearDerivative<D, NP> for CaputoInt
         self.k1 = self.k0 + 1.0;
     }
 
-    fn caputo_derivative_lin(
+    fn derivative_linear(
         &mut self,
         f: &Array<f64, D>,
         dt: f64,
-        store: &mut CaputoStore<D, NP>,
+        store: &mut StressHistory<D, NP>,
     ) -> Array<f64, D> {
         if (dt - self.dt).abs() > f64::EPSILON {
             <CaputoInternal<NP> as NDArrayLinearDerivative<D, NP>>::init_with_dt_lin(self, dt);

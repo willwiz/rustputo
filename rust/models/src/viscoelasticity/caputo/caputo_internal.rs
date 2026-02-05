@@ -1,6 +1,6 @@
-use crate::fractional::caputo_data::CaputoData;
-use crate::fractional::derivatives::LinearDerivative;
 use crate::utils::errors::PyError;
+use crate::viscoelasticity::caputo_data::CaputoData;
+use crate::viscoelasticity::derivatives::LinearDerivative;
 use core::array;
 
 pub struct CaputoInternal<const FDIM: usize, const NP: usize> {
@@ -69,7 +69,7 @@ impl<const FDIM: usize, const NP: usize> LinearDerivative<FDIM> for CaputoIntern
         self
     }
 
-    fn caputo_derivative_lin(&mut self, fval: &[f64; FDIM], dt: f64) -> [f64; FDIM] {
+    fn derivative_linear(&mut self, fval: &[f64; FDIM], dt: f64) -> [f64; FDIM] {
         if (dt - self.dt).abs() > f64::EPSILON {
             self.init_with_dt_lin(dt);
         }

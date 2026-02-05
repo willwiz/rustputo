@@ -10,19 +10,20 @@ use crate::{
 use ndarray::{Array1, Array2, Array3, ArrayView1, ArrayView3, Axis};
 
 pub fn solve_uniaxial_pk2(model: &UniaxialPK2Stress, strain: &UniaxialDeformation) -> f64 {
-    return model.stress - model.pressure * strain.i_n * strain.c_inv;
+    model.stress - model.pressure * strain.i_n * strain.c_inv
 }
 
 pub fn solve_biaxial_pk2(model: &BiaxialPK2Stress, strain: &BiaxialDeformation) -> Array2<f64> {
-    return &model.stress - model.pressure * strain.i_n * &strain.c_inv;
+    &model.stress - model.pressure * strain.i_n * &strain.c_inv
 }
 
-// Solving triaxial PK2 requires special consideration for compressibility
-
-pub fn simulate_hyperelastic_uniaxial_response<T: ComputeHyperelasticUniaxialPK2>(
+pub fn simulate_hyperelastic_uniaxial_response<T>(
     tissue: &T,
     strain: &ArrayView1<f64>,
-) -> Array1<f64> {
+) -> Result<Array1<f64>, PyError>
+where
+    T: ComputeHyperelasticUniaxialPK2,
+{
     let mut stress = Array1::<f64>::zeros(strain.raw_dim());
     let mut kin = UniaxialDeformation::new();
     for (i, &eps) in strain.iter().enumerate() {
@@ -30,13 +31,16 @@ pub fn simulate_hyperelastic_uniaxial_response<T: ComputeHyperelasticUniaxialPK2
         let pk2_stress = tissue.pk2(&kin);
         stress[i] = solve_uniaxial_pk2(&pk2_stress, &kin);
     }
-    return stress;
+    Ok(stress)
 }
 
-pub fn simulate_hyperelastic_biaxial_response<T: ComputeHyperelasticBiaxialPK2>(
+pub fn simulate_hyperelastic_biaxial_response<T>(
     tissue: &T,
     strain: &ArrayView3<f64>,
-) -> Result<Array3<f64>, PyError> {
+) -> Result<Array3<f64>, PyError>
+where
+    T: ComputeHyperelasticBiaxialPK2,
+{
     let mut stress = Array3::<f64>::zeros(strain.raw_dim());
     let mut kin: BiaxialDeformation = BiaxialDeformation::new();
     for (i, eps) in strain.axis_iter(Axis(0)).enumerate() {
@@ -49,25 +53,31 @@ pub fn simulate_hyperelastic_biaxial_response<T: ComputeHyperelasticBiaxialPK2>(
     Ok(stress)
 }
 
-pub fn simulate_hyperelastic_triaxial_response<T: ComputeHyperelasticTriaxialPK2>(
+pub fn simulate_hyperelastic_triaxial_response<T>(
     tissue: &T,
     strain: &ArrayView3<f64>,
-) -> Result<Array3<f64>, PyError> {
+) -> Result<Array3<f64>, PyError>
+where
+    T: ComputeHyperelasticTriaxialPK2,
+{
     let mut stress = Array3::<f64>::zeros(strain.raw_dim());
     let mut kin = TriaxialDeformation::new();
     for (i, eps) in strain.axis_iter(Axis(0)).enumerate() {
         kin.precompute_from(&eps)?;
-        let pk2_stress = tissue.pk2(&kin);
+        let pk2_stress = tissue.pk2(&kin)?;
         stress.index_axis_mut(Axis(0), i).assign(&pk2_stress.stress);
     }
     Ok(stress)
 }
 
-pub fn simulate_viscoelastic_uniaxial_response<T: ComputeViscoelasticUniaxialPK2>(
+pub fn simulate_viscoelastic_uniaxial_response<T>(
     tissue: &mut T,
     strain: &ArrayView1<f64>,
     dt: &ArrayView1<f64>,
-) -> Result<Array1<f64>, PyError> {
+) -> Result<Array1<f64>, PyError>
+where
+    T: ComputeViscoelasticUniaxialPK2,
+{
     let mut stress = Array1::<f64>::zeros(strain.raw_dim());
     let mut kin = UniaxialDeformation::new();
     for (i, &eps) in strain.iter().skip(1).enumerate() {
@@ -86,11 +96,14 @@ pub fn simulate_viscoelastic_uniaxial_response<T: ComputeViscoelasticUniaxialPK2
     Ok(stress)
 }
 
-pub fn simulate_viscoelastic_biaxial_response<T: ComputeViscoelasticBiaxialPK2>(
+pub fn simulate_viscoelastic_biaxial_response<T>(
     tissue: &mut T,
     strain: &ArrayView3<f64>,
     dt: &ArrayView1<f64>,
-) -> Result<Array3<f64>, PyError> {
+) -> Result<Array3<f64>, PyError>
+where
+    T: ComputeViscoelasticBiaxialPK2,
+{
     let mut stress = Array3::<f64>::zeros(strain.raw_dim());
     let mut kin = BiaxialDeformation::new();
     for (i, eps) in strain.axis_iter(Axis(0)).enumerate() {
@@ -111,11 +124,14 @@ pub fn simulate_viscoelastic_biaxial_response<T: ComputeViscoelasticBiaxialPK2>(
     Ok(stress)
 }
 
-pub fn simulate_viscoelastic_triaxial_response<T: ComputeViscoelasticTriaxialPK2>(
+pub fn simulate_viscoelastic_triaxial_response<T>(
     tissue: &mut T,
     strain: &ArrayView3<f64>,
     dt: &ArrayView1<f64>,
-) -> Result<Array3<f64>, PyError> {
+) -> Result<Array3<f64>, PyError>
+where
+    T: ComputeViscoelasticTriaxialPK2,
+{
     let mut stress = Array3::<f64>::zeros(strain.raw_dim());
     let mut kin = TriaxialDeformation::new();
     for (i, eps) in strain.axis_iter(Axis(0)).enumerate() {

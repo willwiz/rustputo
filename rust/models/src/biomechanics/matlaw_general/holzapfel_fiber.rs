@@ -6,6 +6,7 @@ use crate::{
         ComputeHyperelasticUniaxialPK2, TriaxialPK2Stress, UniaxialPK2Stress,
     },
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    utils::errors::PyError,
 };
 
 pub struct HolzapfelFiber {
@@ -63,10 +64,10 @@ impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiber {
 }
 
 impl ComputeHyperelasticTriaxialPK2 for HolzapfelFiber {
-    fn pk2(&self, strain: &TriaxialDeformation) -> TriaxialPK2Stress {
+    fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
         let i_f = (&strain.c * &self.h).sum() - 1.0;
-        TriaxialPK2Stress {
+        Ok(TriaxialPK2Stress {
             stress: self.k * i_f * (self.b * i_f).powi(2).exp() * &self.h,
-        }
+        })
     }
 }

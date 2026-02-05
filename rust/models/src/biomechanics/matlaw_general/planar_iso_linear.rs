@@ -6,6 +6,7 @@ use crate::{
         ComputeHyperelasticUniaxialPK2, TriaxialPK2Stress, UniaxialPK2Stress,
     },
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    utils::errors::PyError,
 };
 
 pub struct PlanarIsoLinear {
@@ -41,9 +42,9 @@ impl ComputeHyperelasticBiaxialPK2 for PlanarIsoLinear {
 }
 
 impl ComputeHyperelasticTriaxialPK2 for PlanarIsoLinear {
-    fn pk2(&self, strain: &TriaxialDeformation) -> TriaxialPK2Stress {
-        TriaxialPK2Stress {
+    fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
+        Ok(TriaxialPK2Stress {
             stress: self.k * (0.5 * (&strain.c * &self.h).sum() - 1.0) * &self.h,
-        }
+        })
     }
 }

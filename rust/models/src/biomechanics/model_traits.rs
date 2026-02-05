@@ -1,7 +1,8 @@
 use ndarray::Array2;
 
-use crate::kinematics::deformation::{
-    BiaxialDeformation, TriaxialDeformation, UniaxialDeformation,
+use crate::{
+    kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    utils::errors::PyError,
 };
 
 pub struct UniaxialPK2Stress {
@@ -18,6 +19,8 @@ pub struct TriaxialPK2Stress {
     pub stress: Array2<f64>,
 }
 
+pub trait ParseParameters {}
+
 pub trait ComputeHyperelasticUniaxialPK2 {
     fn pk2(&self, strain: &UniaxialDeformation) -> UniaxialPK2Stress;
 }
@@ -27,7 +30,7 @@ pub trait ComputeHyperelasticBiaxialPK2 {
 }
 
 pub trait ComputeHyperelasticTriaxialPK2 {
-    fn pk2(&self, strain: &TriaxialDeformation) -> TriaxialPK2Stress;
+    fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError>;
 }
 
 pub trait ComputeViscoelasticUniaxialPK2 {

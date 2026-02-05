@@ -1,10 +1,11 @@
 pub mod biomechanics;
 pub mod example;
-pub mod fractional;
 pub mod kinematics;
 pub mod linalg;
+pub mod simulation;
 pub mod tissues_1d;
 pub mod utils;
+pub mod viscoelasticity;
 
 use linalg::optimization::linear::lgres_mat_py;
 
