@@ -108,6 +108,17 @@ impl UniaxialDeformation {
     }
 }
 
+impl PseudoInvariants for BiaxialDeformation {
+    fn i_4(&self, a0: &ArrayView1<f64>) -> f64 {
+        let a0_c = self.c.dot(a0);
+        a0.dot(&a0_c)
+    }
+
+    fn i_h(&self, a0: &ArrayView2<f64>) -> f64 {
+        (&self.c * a0).sum()
+    }
+}
+
 impl PseudoInvariants for TriaxialDeformation {
     fn i_4(&self, a0: &ArrayView1<f64>) -> f64 {
         let a0_c = self.c.dot(a0);

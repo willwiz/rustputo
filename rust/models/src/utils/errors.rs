@@ -1,5 +1,6 @@
 use std::fmt;
 
+use ndarray::ShapeError;
 use ndarray_linalg::error::LinalgError;
 
 #[derive(Debug)]
@@ -12,6 +13,12 @@ pub enum PyError {
 impl From<LinalgError> for PyError {
     fn from(err: LinalgError) -> PyError {
         PyError::Math(err.to_string())
+    }
+}
+
+impl From<ShapeError> for PyError {
+    fn from(err: ShapeError) -> PyError {
+        PyError::Shape(err.to_string())
     }
 }
 

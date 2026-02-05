@@ -5,6 +5,8 @@ use crate::biomechanics::model_traits::{
 use crate::kinematics::deformation::{
     BiaxialDeformation, TriaxialDeformation, UniaxialDeformation,
 };
+use crate::kinematics::invariants::PseudoInvariants;
+use crate::linalg::{outer_product, outer_sym_product};
 use crate::utils::errors::PyError;
 use ndarray::Array2;
 pub struct DoubleE {
@@ -35,39 +37,14 @@ impl DoubleE {
         k_fn: f64,
         k_sn: f64,
         h: Array2<f64>,
-    ) -> Self {
-        let sym = |v: Array2<f64>| &v + &v.t();
-        let mxm = h
-            .row(0)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(0).to_shape((1, h.ncols())).unwrap());
-        let sxs = h
-            .row(1)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(1).to_shape((1, h.ncols())).unwrap());
-        let nxn = h
-            .row(2)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(2).to_shape((1, h.ncols())).unwrap());
-        let mxs = sym(h
-            .row(0)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(1).to_shape((1, h.ncols())).unwrap()));
-        let mxn = sym(h
-            .row(0)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(2).to_shape((1, h.ncols())).unwrap()));
-        let sxn = sym(h
-            .row(1)
-            .to_shape((h.ncols(), 1))
-            .unwrap()
-            .dot(&h.row(2).to_shape((1, h.ncols())).unwrap()));
-        Self {
+    ) -> Result<Self, PyError> {
+        let mxm = outer_product(&h.row(0).view(), &h.row(0).view())?;
+        let sxs = outer_product(&h.row(1).view(), &h.row(1).view())?;
+        let nxn = outer_product(&h.row(2).view(), &h.row(2).view())?;
+        let mxs = outer_sym_product(&h.row(0).view(), &h.row(1).view())?;
+        let mxn = outer_sym_product(&h.row(0).view(), &h.row(2).view())?;
+        let sxn = outer_sym_product(&h.row(1).view(), &h.row(2).view())?;
+        Ok(Self {
             b_iso,
             b_shear,
             k_ff,
@@ -82,7 +59,7 @@ impl DoubleE {
             mxs,
             mxn,
             sxn,
-        }
+        })
     }
 }
 
@@ -100,10 +77,10 @@ impl ComputeHyperelasticUniaxialPK2 for DoubleE {
 
 impl ComputeHyperelasticBiaxialPK2 for DoubleE {
     fn pk2(&self, strain: &BiaxialDeformation) -> BiaxialPK2Stress {
-        let i_f = (&strain.c * &self.mxm).sum();
-        let i_s = (&strain.c * &self.sxs).sum();
+        let i_f = strain.i_h(&self.mxm.view());
+        let i_s = strain.i_h(&self.sxs.view());
         let i_n = 1.0 / strain.det;
-        let i_fs = (&strain.c * &self.mxs).sum();
+        let i_fs = strain.i_h(&self.mxs.view());
         let w_1 = (self.b_iso * (i_f + i_s + i_n - 3.0)).exp();
         let w_2 = (self.b_shear * i_fs).exp();
         let stress = self.k_ff * (w_1 * i_f - 1.0) * &self.mxm
@@ -118,12 +95,12 @@ impl ComputeHyperelasticBiaxialPK2 for DoubleE {
 
 impl ComputeHyperelasticTriaxialPK2 for DoubleE {
     fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
-        let i_f = (&strain.c * &self.mxm).sum();
-        let i_s = (&strain.c * &self.sxs).sum();
-        let i_n = (&strain.c * &self.nxn).sum();
-        let i_fs = (&strain.c * &self.mxs).sum();
-        let i_fn = (&strain.c * &self.mxn).sum();
-        let i_sn = (&strain.c * &self.sxn).sum();
+        let i_f = strain.i_h(&self.mxm.view());
+        let i_s = strain.i_h(&self.sxs.view());
+        let i_n = strain.i_h(&self.nxn.view());
+        let i_fs = strain.i_h(&self.mxs.view());
+        let i_fn = strain.i_h(&self.mxn.view());
+        let i_sn = strain.i_h(&self.sxn.view());
         let w_1 = (self.b_iso * (i_f + i_s + i_n - 3.0)).exp();
         let w_2 = (self.b_shear * (i_fs + i_fn + i_sn)).exp();
         let stress = self.k_ff * (w_1 * i_f - 1.0) * &self.mxm

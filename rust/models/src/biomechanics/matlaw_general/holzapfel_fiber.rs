@@ -6,6 +6,7 @@ use crate::{
         ComputeHyperelasticUniaxialPK2, TriaxialPK2Stress, UniaxialPK2Stress,
     },
     kinematics::deformation::{BiaxialDeformation, TriaxialDeformation, UniaxialDeformation},
+    kinematics::invariants::PseudoInvariants,
     utils::errors::PyError,
 };
 
@@ -55,7 +56,7 @@ impl ComputeHyperelasticUniaxialPK2 for HolzapfelFiber {
 
 impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiber {
     fn pk2(&self, strain: &BiaxialDeformation) -> BiaxialPK2Stress {
-        let i_f = (&strain.c * &self.h).sum() - 1.0;
+        let i_f = strain.i_h(&self.h.view()) - 1.0;
         BiaxialPK2Stress {
             stress: self.k * i_f * (self.b * i_f).powi(2).exp() * &self.h,
             pressure: 0.0,
@@ -65,7 +66,7 @@ impl ComputeHyperelasticBiaxialPK2 for HolzapfelFiber {
 
 impl ComputeHyperelasticTriaxialPK2 for HolzapfelFiber {
     fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
-        let i_f = (&strain.c * &self.h).sum() - 1.0;
+        let i_f = strain.i_h(&self.h.view()) - 1.0;
         Ok(TriaxialPK2Stress {
             stress: self.k * i_f * (self.b * i_f).powi(2).exp() * &self.h,
         })
