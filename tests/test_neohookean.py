@@ -6,8 +6,8 @@
 import numpy as np
 
 from rustputo.pymodel.modeling.matlaws import NeoHookean
-from rustputo.rust.models.constitutive_laws import NeoHookean as RustNeoHookean
-from rustputo.rust.models.testing import sum_as_string
+from rustputo.rust.constitutive_laws import NeoHookean as RustNeoHookean
+from rustputo.rust.testing import sum_as_string
 
 BENCHMARK = np.array([[1, 0.0, 0.0], [0.0, -1, 0.0], [0.0, 0.0, -1]]) / 3 * (2 ** (-1 / 3))
 

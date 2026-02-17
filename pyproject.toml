@@ -24,8 +24,8 @@ license-files = ["LICENSE"]
 [tool.setuptools.packages]
 find = { where = ["src"] }
 [[tool.setuptools-rust.ext-modules]]
-target = "rustputo.rust.models"
-path = "rust/models/Cargo.toml"
+target = "rustputo.rust"
+path = "rust/Cargo.toml"
 binding = "PyO3"
 
 
