@@ -1,10 +1,9 @@
-use crate::biomechanics::matlaw_uniaxial::linear::SELinear;
 use crate::kinematics::deformation::UniaxialDeformation;
 use crate::utils::errors::PyError;
 use crate::viscoelasticity::derivatives::LinearDerivative;
 use crate::{
     biomechanics::{
-        matlaw_general::{HolzapfelFiber, NeoHookean},
+        matlaw_general::{HolzapfelFiber, NeoHookean, PlanarLinear},
         model_traits::{
             ComputeHyperelasticUniaxialPK2, ComputeViscoelasticUniaxialPK2, UniaxialPK2Stress,
         },
@@ -12,11 +11,11 @@ use crate::{
     simulation::FromNumpy,
     viscoelasticity::caputo::caputo_internal::CaputoInternal,
 };
-use ndarray::ArrayView1;
+use ndarray::{array, ArrayView1};
 
 pub struct AortaUniaxial {
     pub matrix: NeoHookean,
-    pub elastin: SELinear,
+    pub elastin: PlanarLinear,
     pub collagen: HolzapfelFiber,
 }
 
@@ -45,7 +44,10 @@ impl AortaUniaxial {
     pub fn new(pars: AortaParameters) -> Result<Self, PyError> {
         Ok(Self {
             matrix: NeoHookean { k: pars.matrix_k },
-            elastin: SELinear { k: pars.elastin_k },
+            elastin: PlanarLinear {
+                k: pars.elastin_k,
+                n: array![0.0, 0.0, 1.0],
+            },
             collagen: HolzapfelFiber {
                 k: pars.collagen_k,
                 b: pars.collagen_b,

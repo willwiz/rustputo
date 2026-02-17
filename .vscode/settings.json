@@ -1,6 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
-        "./rust/models/Cargo.toml"
+        "./rust/Cargo.toml"
     ],
     "[python]": {
         "editor.codeActionsOnSave": {
