@@ -2,19 +2,19 @@ pub mod biomechanics;
 pub mod example;
 pub mod kinematics;
 pub mod linalg;
+pub mod pymodel;
 pub mod simulation;
 pub mod tissues_1d;
-pub mod tissues_3d;
 pub mod utils;
 pub mod viscoelasticity;
 use linalg::optimization::linear::lgres_mat_py;
 use pyo3::types::PyAnyMethods;
 
 use crate::example::{axpy_py, mult_py, sum_as_string};
+use crate::pymodel::neohookean::PyNeoHookean;
 use crate::tissues_1d::aorta::{
     simulate_aorta_he_uniaxial_response, simulate_aorta_ve_uniaxial_response,
 };
-use crate::tissues_3d::neohookean::PyNeoHookean;
 use pyo3::{pymodule, types::PyModule, Bound, PyResult};
 
 #[pymodule(gil_used = false)]

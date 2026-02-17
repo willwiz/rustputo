@@ -51,3 +51,15 @@ def test_rust_neohookean() -> None:
         BENCHMARK,
         atol=1e-6,
     )
+
+
+def test_rust_v_python() -> None:
+    model_py = NeoHookean(k=1.0)
+    model_rust = RustNeoHookean(k=1.0)
+    right_c = np.array(
+        [[2.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+        dtype=np.float64,
+    )
+    stress_py = model_py.simulate_3d(right_c)
+    stress_rust = model_rust.simulate(right_c)
+    assert np.allclose(stress_py, stress_rust, atol=1e-6)

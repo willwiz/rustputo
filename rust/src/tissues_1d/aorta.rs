@@ -2,10 +2,10 @@ pub mod uniaxial_model;
 use crate::simulation::pymodeling::{
     pymodel_hyperelastic_uniaxial_response, pymodel_viscoelastic_uniaxial_response,
 };
-use crate::tissues_1d::aorta::uniaxial_model::AortaUniaxialViscoelastic;
 use numpy::{PyArray1, PyReadonlyArray1};
 use pyo3::{Bound, PyResult, Python};
 use uniaxial_model::AortaUniaxial;
+use uniaxial_model::AortaUniaxialViscoelastic;
 
 #[pyo3::pyfunction]
 #[pyo3(name = "simulate_aorta_he_uniaxial_response")]
