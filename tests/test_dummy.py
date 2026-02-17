@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from rustputo.rust import axpy, lgres_mat, mult, sum_as_string
+from rustputo.rust.testing import axpy, lgres_mat, mult, sum_as_string
 
 
 def test_mult() -> None:

@@ -16,7 +16,7 @@ use crate::tissues_1d::aorta::{
 };
 use crate::tissues_3d::neohookean::PyNeoHookean;
 use pyo3::{pymodule, types::PyModule, Bound, PyResult};
-/// A Python module implemented in Rust.
+
 #[pymodule(gil_used = false)]
 #[pyo3(name = "rust")]
 mod rust {
@@ -24,21 +24,11 @@ mod rust {
     use super::*;
 
     #[pymodule_export]
-    use super::axpy_py;
+    use constitutive_laws;
     #[pymodule_export]
-    use super::constitutive_laws;
+    use pysimulation;
     #[pymodule_export]
-    use super::lgres_mat_py;
-    #[pymodule_export]
-    use super::mult_py;
-    #[pymodule_export]
-    use super::simulate_aorta_he_uniaxial_response;
-    #[pymodule_export]
-    use super::simulate_aorta_ve_uniaxial_response;
-    #[pymodule_export]
-    use super::sum_as_string;
-    #[pymodule_export]
-    use super::testing;
+    use testing;
 
     #[pymodule_init]
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -49,6 +39,7 @@ mod rust {
             m.getattr("constitutive_laws")?,
         )?;
         modules.set_item("rustputo.rust.testing", m.getattr("testing")?)?;
+        modules.set_item("rustputo.rust.simulation", m.getattr("simulation")?)?;
         Ok(())
     }
 }
@@ -61,5 +52,18 @@ mod constitutive_laws {
 #[pymodule(submodule)]
 mod testing {
     #[pymodule_export]
+    use super::axpy_py;
+    #[pymodule_export]
+    use super::lgres_mat_py;
+    #[pymodule_export]
+    use super::mult_py;
+    #[pymodule_export]
     use super::sum_as_string;
+}
+#[pymodule(submodule, name = "simulation")]
+mod pysimulation {
+    #[pymodule_export]
+    use super::simulate_aorta_he_uniaxial_response;
+    #[pymodule_export]
+    use super::simulate_aorta_ve_uniaxial_response;
 }
