@@ -3,7 +3,8 @@ import numpy as np
 from numpy.typing import NDArray
 from pytools.arrays import A1, A2
 
-from rustputo.models import testing as testing
+# from rustputo.rust.models import constitutive_laws as constitutive_laws
+# from rustputo.rust.models import testing as testing
 
 __all__ = [
     "axpy",
@@ -12,7 +13,6 @@ __all__ = [
     "simulate_aorta_he_uniaxial_response",
     "simulate_aorta_ve_uniaxial_response",
     "sum_as_string",
-    "testing",
 ]
 
 def sum_as_string(a: int, b: int) -> str: ...

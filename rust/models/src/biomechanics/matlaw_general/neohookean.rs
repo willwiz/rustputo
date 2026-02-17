@@ -40,7 +40,7 @@ impl ComputeHyperelasticBiaxialPK2 for NeoHookean {
 impl ComputeHyperelasticTriaxialPK2 for NeoHookean {
     fn pk2(&self, strain: &TriaxialDeformation) -> Result<TriaxialPK2Stress, PyError> {
         Ok(TriaxialPK2Stress {
-            stress: (self.k * strain.j_23)
+            stress: (self.k * strain.j_13)
                 * (Array2::eye(3) - (1.0 / 3.0) * strain.i_1 * &strain.c_inv),
         })
     }

@@ -1,0 +1,6 @@
+import numpy as np
+from pytools.arrays import A2
+
+class NeoHookean:
+    def __init__(self, k: float) -> None: ...
+    def simulate(self, c: A2[np.float64]) -> A2[np.float64]: ...

@@ -17,6 +17,7 @@
     "python.analysis.completeFunctionParens": true,
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingTypeStubs": "none",
+        "reportMissingModuleSource": "none",
     },
     "python.analysis.enablePytestSupport": false,
     "python.analysis.include": [
