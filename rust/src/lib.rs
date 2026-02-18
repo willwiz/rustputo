@@ -48,6 +48,8 @@ mod rust {
 mod constitutive_laws {
     #[pymodule_export]
     use super::PyNeoHookean;
+    #[pymodule_export]
+    use crate::biomechanics::hydrostatics::{pysolve_hydrostatics, pysolve_hydrostatics_array};
 }
 #[pymodule(submodule)]
 mod testing {

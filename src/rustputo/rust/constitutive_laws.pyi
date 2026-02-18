@@ -1,6 +1,13 @@
 import numpy as np
-from pytools.arrays import A2
+from pytools.arrays import A1, A2, A3
 
 class NeoHookean:
     def __init__(self, k: float) -> None: ...
     def simulate(self, c: A2[np.float64]) -> A2[np.float64]: ...
+
+def solve_hydrostatics(
+    stress: A2[np.float64], c_inv: A2[np.float64], free_sufs: np.ndarray
+) -> float: ...
+def solve_hydrostatics_array(
+    stress: A3[np.float64], c_inv: A3[np.float64], free_sufs: np.ndarray
+) -> A1[np.float64]: ...
